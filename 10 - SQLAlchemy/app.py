@@ -42,9 +42,7 @@ def home():
 
 
 #Set Last Date
-last_date = (session.query(Measurement.date)
-                .order_by(Measurement.date.desc())
-                .first())
+last_date = (session.query(Measurement.date).order_by(Measurement.date.desc()).first())
 last_date = list(np.ravel(last_date))[0]
 last_date = dt.datetime.strptime(last_date, '%Y-%m-%d')
 
@@ -66,9 +64,7 @@ prev_year = dt.datetime.strftime(prev_year, '%Y-%m-%d')
 @app.route("/api/v1.0/precipitaton")
 def precipitation():
     precipitation_results = (session.query(Measurement.date, Measurement.prcp, Measurement.station)
-                      .filter(Measurement.date > prev_year)
-                      .order_by(Measurement.date)
-                      .all())
+                      .filter(Measurement.date > prev_year).order_by(Measurement.date).all())
     
     precipitation = []
     for x in precipitation_results:
@@ -89,10 +85,8 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
 
-    tobs_results = (session.query(Measurement.date, Measurement.tobs, Measurement.station)
-                      .filter(Measurement.date > prev_year)
-                      .order_by(Measurement.date)
-                      .all())
+    tobs_results = (session.query(Measurement.date, Measurement.tobs, Measurement.station).filter(Measurement.date > prev_year)
+                      .order_by(Measurement.date).all())
 
     tobs = []
     for x in tobs_results:
@@ -105,10 +99,8 @@ def tobs():
 def start(startDate):
     sel = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
-    results =  (session.query(*sel)
-                       .filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
-                       .group_by(Measurement.date)
-                       .all())
+    results =  (session.query(*sel).filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
+                       .group_by(Measurement.date).all())
 
     selected_dates = []                       
     for result in results:
@@ -117,7 +109,7 @@ def start(startDate):
         date["Low Temp"] = result[1]
         date["Avg Temp"] = result[2]
         date["High Temp"] = result[3]
-        dates.append(date)
+        selected_dates.append(date)
     return jsonify(selected_dates)
 
 
@@ -128,11 +120,8 @@ def startEnd(startDate, endDate):
     date_selection = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
 
-    start_end_results =  (session.query(*date_selection)
-                       .filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
-                       .filter(func.strftime("%Y-%m-%d", Measurement.date) <= endDate)
-                       .group_by(Measurement.date)
-                       .all())
+    start_end_results =  (session.query(*date_selection).filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
+                       .filter(func.strftime("%Y-%m-%d", Measurement.date) <= endDate).group_by(Measurement.date).all())
 
     selected_dates = []                       
     for x in start_end_results:
