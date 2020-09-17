@@ -21,10 +21,25 @@ Base.classes.keys()
 #Use Keys
 Measurement = Base.classes.measurement
 Station = Base.classes.station
+
+#Bind Session to Python App and Database
 session = Session(engine)
 
 #Set Flask Weather App
 app = Flask(__name__)
+
+#Set Routes
+@app.route("/")
+def home():
+    return (
+            f"Available Routes:<br/>"
+            f"/api/v1.0/precipitaton<br/>"
+            f"/api/v1.0/stations<br/>"
+            f"/api/v1.0/tobs<br/>"
+
+            f"/api/v1.0/<startDate><br/>"
+            f"/api/v1.0//api/v1.0/<startDate>/<endDate><br/>")
+
 
 #Set Last Date
 last_date = (session.query(Measurement.date)
@@ -46,17 +61,6 @@ last_day = int(dt.datetime.strftime(last_date, '%d'))
 prev_year = dt.date(last_year, last_month, last_day) - dt.timedelta(days=365)
 prev_year = dt.datetime.strftime(prev_year, '%Y-%m-%d')
 
-#Set Routes
-@app.route("/")
-def home():
-    return (
-            f"Available Routes:<br/>"
-            f"/api/v1.0/precipitaton<br/>"
-            f"/api/v1.0/stations<br/>"
-            f"/api/v1.0/tobs<br/>"
-
-            f"/api/v1.0/<start>  <br/>"
-            f"/api/v1.0/<start>/<end><br/>")
 
 
 @app.route("/api/v1.0/precipitaton")
@@ -97,28 +101,32 @@ def tobs():
 
     return jsonify(tobs)
 
-@app.route('/api/v1.0/<start>')
+@app.route('/api/v1.0/<startDate>')
 def start(startDate):
-    date_selection = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
+    sel = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
-    start_results =  (session.query(*date_selection)
+    results =  (session.query(*sel)
                        .filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
                        .group_by(Measurement.date)
                        .all())
 
     selected_dates = []                       
-    for x in start_results:
+    for result in results:
         date = {}
-        date["Date"] = x[0]
-        date["Low Temp"] = x[1]
-        date["Avg Temp"] = x[2]
-        date["High Temp"] = x[3]
-        selected_dates.append(date_dict)
-    return jsonify(dates)
+        date["Date"] = result[0]
+        date["Low Temp"] = result[1]
+        date["Avg Temp"] = result[2]
+        date["High Temp"] = result[3]
+        dates.append(date)
+    return jsonify(selected_dates)
 
-@app.route('/api/v1.0/datesearch/<start>/<end>')
+
+
+
+@app.route('/api/v1.0/<startDate>/<endDate>')
 def startEnd(startDate, endDate):
     date_selection = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
+
 
     start_end_results =  (session.query(*date_selection)
                        .filter(func.strftime("%Y-%m-%d", Measurement.date) >= startDate)
@@ -133,8 +141,8 @@ def startEnd(startDate, endDate):
         date["Low Temp"] = x[1]
         date["Avg Temp"] = x[2]
         date["High Temp"] = x[3]
-        selected_dates.append(date_dict)
-    return jsonify(dates)
+        selected_dates.append(date)
+    return jsonify(selected_dates)
 
 if __name__ == "__main__":
     app.run(debug=True)
