@@ -57,8 +57,8 @@ submit.on("click", function () {
 
 var filterInputs = d3.selectAll('.form-control');
 
-// Clears input fields and input object
-function clearEntries() {
+// Make a function to clears fields and object
+function clear() {
     filters = {};
 
     // Sets every input field to empty
@@ -69,12 +69,14 @@ function clearEntries() {
     });
 };
 
-var clearButton = d3.select("#clear");
-// Clear button on click clears fields
-clearButton.on('click', function () {
+var clearall = d3.select("#clear");
 
-    // Keeps page from refreshing completely, only want the table to refresh
+// Clear upon click clears fields
+clearall.on('click', function () {
+
+    // Prevent the page from refreshing
     d3.event.preventDefault();
+
     // Clears input fields
-    clearEntries()
+    clear()
 });
