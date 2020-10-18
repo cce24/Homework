@@ -8,9 +8,9 @@ tbody = d3.select("tbody")
 // loop through table using poject entries
 function displayData(something){ 
     tbody.text("")
-    something.forEach(function(et_sighting){
+    something.forEach(function(sighting){
     new_tr = tbody.append("tr")
-    Object.entries(et_sighting).forEach(function([key, value]){
+    Object.entries(sighting).forEach(function([key, value]){
         new_td = new_tr.append("td").text(value)	
     })
 })}
@@ -19,7 +19,7 @@ displayData(tableData)
 // console.log("something")
 
 
-// Select the  button
+// Select the button
 var submit = d3.select("#submit");
 
 submit.on("click", function() {
@@ -44,12 +44,12 @@ submit.on("click", function() {
 
   //create a variable which filters the table if a user enters only some information in so that it will still work
 
- var filtered = tableData.filter(et_sighting =>{
-  return (et_sighting.datetime===dateInput.property("value") || !dateInput.property("value") ) && 
-            (et_sighting.city===cityInput.property("value") || !cityInput.property("value")) &&
-            (et_sighting.state===stateInput.property("value") || !stateInput.property("value")) &&
-            (et_sighting.country===countryInput.property("value") || !countryInput.property("value")) &&
-            (et_sighting.shape===shapeInput.property("value") || !shapeInput.property("value"))
+ var filtered = tableData.filter(sighting =>{
+  return (sighting.datetime===dateInput.property("value") || !dateInput.property("value") ) && 
+            (sighting.city===cityInput.property("value") || !cityInput.property("value")) &&
+            (sighting.state===stateInput.property("value") || !stateInput.property("value")) &&
+            (sighting.country===countryInput.property("value") || !countryInput.property("value")) &&
+            (sighting.shape===shapeInput.property("value") || !shapeInput.property("value"))
  })
 
  //run the filtered entries through the displayData function to update the table
