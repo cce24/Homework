@@ -3,9 +3,9 @@ var tableData = data;
 
 // select tbody 
 tbody = d3.select("tbody")
-console.log("hello")
+// console.log("something")
 
-// loop through table using pbject entries
+// loop through table using poject entries
 function displayData(something){ 
     tbody.text("")
     something.forEach(function(et_sighting){
@@ -16,15 +16,14 @@ function displayData(something){
 })}
 
 displayData(tableData)
+// console.log("something")
 
-console.log("hello2")
 
-
-// Select the submit button
+// Select the  button
 var submit = d3.select("#submit");
 
 submit.on("click", function() {
-    console.log("hello3")
+    console.log("something")
 
   // Prevent the page from refreshing
   d3.event.preventDefault();
